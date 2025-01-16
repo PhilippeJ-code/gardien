@@ -1,0 +1,20 @@
+{
+	"id" : "gardien",
+	"name" : "gardien",
+	"description" : "Surveillance des équipements",
+	"licence" : "AGPL",
+	"author" : "PhilippeJ",
+	"require" : "4.4",
+	"category" : "monitoring",
+	"hasDependency" : false,
+	"hasOwnDeamon" : false,
+	"maxDependancyInstallTime" : 0,
+	"changelog" : "https://jeedom.github.io/plugin-template/#language#/changelog",
+	"documentation" : "https://jeedom.github.io/plugin-template/#language#/",
+	"link" : {
+		"forum":"Lien vers le forum",
+		"video" : "Lien vers une video"
+	},
+	"language" : ["fr_FR"],
+	"compatibility" : ["miniplus","smart","rpi","docker","diy","mobile","v4"]
+}
