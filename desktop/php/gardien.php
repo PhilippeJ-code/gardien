@@ -202,16 +202,16 @@
           <fieldset>
             <br /><br />
 
-             <form class="form-horizontal">
+            <form class="form-horizontal">
               <fieldset>
                 <div>
                   <legend>
-                    {{Actions si erreur}}
-                    <a class="btn btn-primary btn-xs pull-right addAction" data-type="actions_vrai"
+                    {{Actions si pas d'erreur}}
+                    <a class="btn btn-primary btn-xs pull-right addAction" data-type="actions_ok"
                       style="position: relative; top : 5px;"><i class="fas fa-plus-circle"></i> {{Ajouter une
                       action}}</a>
                   </legend>
-                  <div id="div_actions_vrai">
+                  <div id="div_actions_ok">
 
                   </div>
                 </div>
@@ -222,12 +222,12 @@
               <fieldset>
                 <div>
                   <legend>
-                    {{Actions si pas d'erreur}}
-                    <a class="btn btn-primary btn-xs pull-right addAction" data-type="actions_faux"
+                    {{Actions si erreur}}
+                    <a class="btn btn-primary btn-xs pull-right addAction" data-type="actions_ko"
                       style="position: relative; top : 5px;"><i class="fas fa-plus-circle"></i> {{Ajouter une
                       action}}</a>
                   </legend>
-                  <div id="div_actions_faux">
+                  <div id="div_actions_ko">
 
                   </div>
                 </div>

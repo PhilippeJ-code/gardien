@@ -284,11 +284,11 @@ function addEquipment(_equipment, _type) {
   if (!isset(_equipment.options.state)) _equipment.options.state = 'Inconnu';
 
   switch (_equipment.options.state) {
-    case "Vrai":
+    case "KO":
       var icon =
         '<i class="far fa-thumbs-down"  style="color: red!important;"></i>';
       break;
-    case "Faux":
+    case "OK":
       var icon =
         '<i class="far fa-thumbs-up" style="color: green!important;"></i>';
       break;
@@ -349,11 +349,11 @@ function addInfo(_info, _type) {
   if (!isset(_info.options.state)) _info.options.state = 'Inconnu';
 
   switch (_info.options.state) {
-    case "Vrai":
+    case "KO":
       var icon =
         '<i class="far fa-thumbs-down"  style="color: red!important;"></i>';
       break;
-    case "Faux":
+    case "OK":
       var icon =
         '<i class="far fa-thumbs-up" style="color: green!important;"></i>';
       break;
@@ -405,8 +405,8 @@ function saveEqLogic(_eqLogic) {
       _eqLogic.configuration = {};
   }
 
-  _eqLogic.configuration.actions_vrai_conf = document.querySelectorAll('#div_actions_vrai .actions_vrai').getJeeValues('.expressionAttr');
-  _eqLogic.configuration.actions_faux_conf = document.querySelectorAll('#div_actions_faux .actions_faux').getJeeValues('.expressionAttr');
+  _eqLogic.configuration.actions_ko_conf = document.querySelectorAll('#div_actions_ko .actions_ko').getJeeValues('.expressionAttr');
+  _eqLogic.configuration.actions_ok_conf = document.querySelectorAll('#div_actions_ok .actions_ok').getJeeValues('.expressionAttr');
 
   _eqLogic.configuration.equipements = document.querySelectorAll('#div_equipements .equipements').getJeeValues('.expressionAttr');
   _eqLogic.configuration.commandes = document.querySelectorAll('#div_commandes .commandes').getJeeValues('.expressionAttr');
@@ -416,20 +416,20 @@ function saveEqLogic(_eqLogic) {
 
 function printEqLogic(_eqLogic) {
 
-  document.getElementById('div_actions_vrai').innerHTML = '';
-  document.getElementById('div_actions_faux').innerHTML = '';
+  document.getElementById('div_actions_ko').innerHTML = '';
+  document.getElementById('div_actions_ok').innerHTML = '';
   document.getElementById('div_equipements').innerHTML = '';
   document.getElementById('div_commandes').innerHTML = '';
 
   if (isset(_eqLogic.configuration)) {
-    if (isset(_eqLogic.configuration.actions_vrai_conf)) {
-      for (var i in _eqLogic.configuration.actions_vrai_conf) {
-        addAction(_eqLogic.configuration.actions_vrai_conf[i], 'actions_vrai');
+    if (isset(_eqLogic.configuration.actions_ko_conf)) {
+      for (var i in _eqLogic.configuration.actions_ko_conf) {
+        addAction(_eqLogic.configuration.actions_ko_conf[i], 'actions_ko');
       }
     }
-    if (isset(_eqLogic.configuration.actions_faux_conf)) {
-      for (var i in _eqLogic.configuration.actions_faux_conf) {
-          addAction(_eqLogic.configuration.actions_faux_conf[i], 'actions_faux');
+    if (isset(_eqLogic.configuration.actions_ok_conf)) {
+      for (var i in _eqLogic.configuration.actions_ok_conf) {
+          addAction(_eqLogic.configuration.actions_ok_conf[i], 'actions_ok');
       }
     }
     if (isset(_eqLogic.configuration.equipements)) {

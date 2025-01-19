@@ -51,6 +51,7 @@ class gardien extends eqLogic
     public function gardienner()
     {
         $bSave = false;
+        $nErreurs = 0;
         // Equipements
         //
         if ($this->getConfiguration('equipements')) {
@@ -66,20 +67,21 @@ class gardien extends eqLogic
                     $expression = '(#timestamp# - strtotime(lastCommunication('. $humanEqLogic.'))) '.$equipements[$i]['options']['condition'];
                     $scenario = null;
                     $return = evaluate(scenarioExpression::setTags(jeedom::fromHumanReadable($expression), $scenario, true));
-                    $state = 'Vrai';
+                    $state = 'OK';
                     if (is_bool($return)) {
-                        if ($return) {
-                            $state = 'Faux';
+                        if (!$return) {
+                            $state = 'KO';
+                            $nErreurs++;
                         }
                     }
                     if (!isset($equipements[$i]['options']['state'])) {
                         $equipements[$i]['options']['state'] = 'Inconnu';
                     }
                     if ($equipements[$i]['options']['state'] != $state) {
-                        if ($state == 'Vrai') {
-                            $this->ActionsVrai($humanEqLogic);
+                        if ($state == 'KO') {
+                            $this->ActionsKO($humanEqLogic);
                         } else {
-                            $this->ActionsFaux($humanEqLogic);
+                            $this->ActionsOK($humanEqLogic);
                         }
                         $equipements[$i]['options']['state'] = $state;
                         $bSave = true;
@@ -100,26 +102,28 @@ class gardien extends eqLogic
                 }
                 if (isset($commandes[$i]['options'])) {
                     $humanCmd = cmd::cmdToHumanReadable($commandes[$i]['cmd']);
-                    if ( $commandes[$i]['options']['collectdate'] == 1 )
+                    if ($commandes[$i]['options']['collectdate'] == 1) {
                         $expression = '(#timestamp# - strtotime(collectDate('. $humanCmd.'))) '.$commandes[$i]['options']['condition'];
-                    else
+                    } else {
                         $expression = $humanCmd.' '.$commandes[$i]['options']['condition'];
+                    }
                     $scenario = null;
                     $return = evaluate(scenarioExpression::setTags(jeedom::fromHumanReadable($expression), $scenario, true));
-                    $state = 'Vrai';
+                    $state = 'OK';
                     if (is_bool($return)) {
-                        if ($return) {
-                            $state = 'Faux';
+                        if (!$return) {
+                            $state = 'KO';
+                            $nErreurs++;
                         }
                     }
                     if (!isset($commandes[$i]['options']['state'])) {
                         $commandes[$i]['options']['state'] = 'Inconnu';
                     }
                     if ($commandes[$i]['options']['state'] != $state) {
-                        if ($state == 'Vrai') {
-                            $this->ActionsVrai($humanCmd);
+                        if ($state == 'KO') {
+                            $this->ActionsKO($humanCmd);
                         } else {
-                            $this->ActionsFaux($humanCmd);
+                            $this->ActionsOK($humanCmd);
                         }
                         $commandes[$i]['options']['state'] = $state;
                         $bSave = true;
@@ -128,16 +132,18 @@ class gardien extends eqLogic
             }
             $this->setConfiguration('commandes', $commandes);
         }
-        if ( $bSave )
+        if ($bSave) {
             $this->save();
-}
+        }
+        $this->getCmd(null, 'nErrors')->event($nErreurs);
+    }
 
-    // On exécute les actions vrai
+    // On exécute les actions ko
     //
-    public function actionsVrai($humanEqLogic)
+    public function actionsKO($humanEqLogic)
     {
-        if ($this->getConfiguration('actions_vrai_conf')) {
-            foreach ($this->getConfiguration('actions_vrai_conf') as $action) {
+        if ($this->getConfiguration('actions_ko_conf')) {
+            foreach ($this->getConfiguration('actions_ko_conf') as $action) {
                 try {
                     $cmd = cmd::byId(str_replace('#', '', $action['cmd']));
                     if (!is_object($cmd)) {
@@ -159,7 +165,7 @@ class gardien extends eqLogic
                         $message = str_replace('#object#', str_replace('#', '', $humanEqLogic), $message);
                         $options['message'] = $message;
                     }
-                  scenarioExpression::createAndExec('action', $action['cmd'], $options);
+                    scenarioExpression::createAndExec('action', $action['cmd'], $options);
                 } catch (Exception $e) {
                     log::add('gardien', 'error', $this->getHumanName() . __(' : Erreur lors de l\'éxecution de ', __FILE__) . $action['cmd'] . __('. Détails : ', __FILE__) . $e->getMessage());
                 }
@@ -167,12 +173,12 @@ class gardien extends eqLogic
         }
     }
 
-    // On exécute les actions faux
+    // On exécute les actions ok
     //
-    public function actionsFaux($humanEqLogic)
+    public function actionsOk($humanEqLogic)
     {
-        if ($this->getConfiguration('actions_faux_conf')) {
-            foreach ($this->getConfiguration('actions_faux_conf') as $action) {
+        if ($this->getConfiguration('actions_ok_conf')) {
+            foreach ($this->getConfiguration('actions_ok_conf') as $action) {
                 try {
                     $cmd = cmd::byId(str_replace('#', '', $action['cmd']));
                     if (!is_object($cmd)) {
@@ -240,6 +246,18 @@ class gardien extends eqLogic
     //
     public function postSave()
     {
+        $nErreurs = $this->getCmd(null, 'nErrors');
+        if (!is_object($nErreurs)) {
+            $nErreurs = new gardienCmd();
+            $nErreurs->setName(__('Erreurs', __FILE__));
+            $nErreurs->setIsVisible(1);
+            $nErreurs->setIsHistorized(0);
+        }
+        $nErreurs->setEqLogic_id($this->getId());
+        $nErreurs->setType('info');
+        $nErreurs->setSubType('numeric');
+        $nErreurs->setLogicalId('nErrors');
+        $nErreurs->save();
     }
 
     // Fonction exécutée automatiquement avant la suppression de l'équipement
