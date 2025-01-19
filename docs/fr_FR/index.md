@@ -6,7 +6,7 @@
 
 ## 1. Configuration du plugin
 
-    Rien de particulier dans la configuration ce plugin. Le cron à la minute est indispensable pour le bon
+    Rien de particulier dans la configuration de ce plugin. Le cron à la minute est indispensable pour le bon
     fonctionnement du plugin.
 
 ## 2. Onglet "Horaire"
