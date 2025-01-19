@@ -282,6 +282,7 @@ function addEquipment(_equipment, _type) {
   }
 
   if (!isset(_equipment.options.state)) _equipment.options.state = 'Inconnu';
+  if (!isset(_equipment.options.calcul)) _equipment.options.calcul = '';
 
   switch (_equipment.options.state) {
     case "KO":
@@ -296,6 +297,7 @@ function addEquipment(_equipment, _type) {
       var icon =
         '<i class="far fa-question-circle" style="color: blue!important;"></i>';
   }
+  var labelCalcul = '<label class="col-sm-1 control-label">'+_equipment.options.calcul+'</label>';
 
   var div = '<div class="' + _type + '">'
   div += '<div class="form-group">';
@@ -314,8 +316,9 @@ function addEquipment(_equipment, _type) {
   div += '<div class="col-sm-8 equipmentOptions">';
   div += '<label class="col-sm-2 control-label"> </label>';  
   div += '<label class="col-sm-1 control-label">Condition</label>';  
-  div += '<input class="col-sm-2 tooltips expressionAttr form-control input-sm" data-l1key="options" data-l2key="condition" placeholder="{{< 3200}}" title="{{Condition}}">' 
+  div += '<input class="col-sm-2 tooltips expressionAttr form-control input-sm" data-l1key="options" data-l2key="condition" placeholder="{{< 3600}}" title="{{Condition}}">' 
   div += '<label class="col-sm-1 control-label">Statut</label>';  
+  div += labelCalcul;
   div += icon;
   div += '</div>';
   div += '</div>';
@@ -347,6 +350,7 @@ function addInfo(_info, _type) {
   }
 
   if (!isset(_info.options.state)) _info.options.state = 'Inconnu';
+  if (!isset(_info.options.calcul)) _info.options.calcul = '';
 
   switch (_info.options.state) {
     case "KO":
@@ -361,6 +365,7 @@ function addInfo(_info, _type) {
       var icon =
         '<i class="far fa-question-circle" style="color: blue!important;"></i>';
   }
+  var labelCalcul = '<label class="col-sm-1 control-label">'+_info.options.calcul+'</label>';
 
   var div = '<div class="' + _type + '">'
   div += '<div class="form-group">';
@@ -379,8 +384,9 @@ function addInfo(_info, _type) {
   div += '<div class="col-sm-8 infoOptions">';
   div += '<label class="col-sm-2 checkbox-inline"><input type="checkbox" class="expressionAttr" data-l1key="options" data-l2key="collectdate"/>{{Date de collecte}}</label>'
   div += '<label class="col-sm-1 control-label">Condition</label>';  
-  div += '<input class="col-sm-2 tooltips expressionAttr form-control input-sm" data-l1key="options" data-l2key="condition" placeholder="{{== 1 ou < 3200}}" title="{{Condition}}">' 
+  div += '<input class="col-sm-2 tooltips expressionAttr form-control input-sm" data-l1key="options" data-l2key="condition" placeholder="{{== 1 ou < 3600}}" title="{{Condition}}">' 
   div += '<label class="col-sm-1 control-label">Statut</label>';  
+  div += labelCalcul;
   div += icon;
   div += '</div>';
   div += '</div>';

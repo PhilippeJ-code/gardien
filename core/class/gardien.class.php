@@ -74,6 +74,12 @@ class gardien extends eqLogic
                             $nErreurs++;
                         }
                     }
+                    
+                    $expression = '(#timestamp# - strtotime(lastCommunication('. $humanEqLogic.')))';
+                    $scenario = null;
+                    $return = evaluate(scenarioExpression::setTags(jeedom::fromHumanReadable($expression), $scenario, true));
+                    $equipements[$i]['options']['calcul'] = $return;
+
                     if (!isset($equipements[$i]['options']['state'])) {
                         $equipements[$i]['options']['state'] = 'Inconnu';
                     }
@@ -116,6 +122,16 @@ class gardien extends eqLogic
                             $nErreurs++;
                         }
                     }
+
+                    if ($commandes[$i]['options']['collectdate'] == 1) {
+                        $expression = '(#timestamp# - strtotime(collectDate('. $humanCmd.')))';
+                    } else {
+                        $expression = $humanCmd;
+                    }
+                    $scenario = null;
+                    $return = evaluate(scenarioExpression::setTags(jeedom::fromHumanReadable($expression), $scenario, true));
+                    $commandes[$i]['options']['calcul'] = $return;
+
                     if (!isset($commandes[$i]['options']['state'])) {
                         $commandes[$i]['options']['state'] = 'Inconnu';
                     }
