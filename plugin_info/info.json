@@ -9,8 +9,8 @@
 	"hasDependency" : false,
 	"hasOwnDeamon" : false,
 	"maxDependancyInstallTime" : 0,
-	"changelog" : "https://jeedom.github.io/plugin-template/#language#/changelog",
-	"documentation" : "https://jeedom.github.io/plugin-template/#language#/",
+    "changelog": "https:\/\/github.com\/PhilippeJ-code\/gardien\/blob\/master\/docs\/#language#\/changelog.md",
+    "documentation": "https:\/\/github.com\/PhilippeJ-code\/gardien\/blob\/master\/docs\/#language#\/index.md",
 	"link" : {
 		"forum":"Lien vers le forum",
 		"video" : "Lien vers une video"
