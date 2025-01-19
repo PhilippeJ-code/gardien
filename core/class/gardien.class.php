@@ -36,7 +36,7 @@ class gardien extends eqLogic
                     try {
                         $c = new Cron\CronExpression(checkAndFixCron($gardien->getConfiguration('cron_gardiennage')), new Cron\FieldFactory());
                         if ($c->isDue()) {
-                            $gardien->gardienner();
+                            $gardien->gardienner(false);
                         }
                     } catch (Exception $e) {
                         log::add('gardien', 'error', $gardien->getHumanName() . ' : ' . $e->getMessage());
@@ -48,7 +48,7 @@ class gardien extends eqLogic
 
     // Fonction de gardiennage
     //
-    public function gardienner()
+    public function gardienner($bForceSave)
     {
         $bSave = false;
         $nErreurs = 0;
@@ -74,7 +74,7 @@ class gardien extends eqLogic
                             $nErreurs++;
                         }
                     }
-                    
+
                     $expression = '(#timestamp# - strtotime(lastCommunication('. $humanEqLogic.')))';
                     $scenario = null;
                     $return = evaluate(scenarioExpression::setTags(jeedom::fromHumanReadable($expression), $scenario, true));
@@ -148,7 +148,7 @@ class gardien extends eqLogic
             }
             $this->setConfiguration('commandes', $commandes);
         }
-        if ($bSave) {
+        if ($bSave || $bForceSave) {
             $this->save();
         }
         $this->getCmd(null, 'nErrors')->event($nErreurs);
@@ -224,6 +224,11 @@ class gardien extends eqLogic
         }
     }
 
+    public function rafraichir()
+    {
+        $this->gardienner(true);
+    }
+
     // Fonction exécutée automatiquement avant la création de l'équipement
     //
     public function preInsert()
@@ -262,6 +267,18 @@ class gardien extends eqLogic
     //
     public function postSave()
     {
+
+        $refresh = $this->getCmd(null, 'refresh');
+        if (!is_object($refresh)) {
+            $refresh = new viessmannIotCmd();
+            $refresh->setName(__('Rafraichir', __FILE__));
+        }
+        $refresh->setEqLogic_id($this->getId());
+        $refresh->setLogicalId('refresh');
+        $refresh->setType('action');
+        $refresh->setSubType('other');
+        $refresh->save();
+
         $nErreurs = $this->getCmd(null, 'nErrors');
         if (!is_object($nErreurs)) {
             $nErreurs = new gardienCmd();
@@ -300,6 +317,10 @@ class gardienCmd extends cmd
     public function execute($_options = array())
     {
 
+        $eqlogic = $this->getEqLogic();
+        if ($this->getLogicalId() == 'refresh') {
+            $eqlogic->rafraichir();
+        }
     }
 
 }
