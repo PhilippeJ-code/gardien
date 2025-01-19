@@ -307,7 +307,31 @@ class gardien extends eqLogic
 
     }
 
+    // Permet de modifier l'affichage du widget (également utilisable par les commandes)
+    //
+    public function toHtml($_version = 'dashboard')
+    {
+        $isWidgetPlugin = $this->getConfiguration('isWidgetPlugin');
 
+        if (!$isWidgetPlugin) {
+            return eqLogic::toHtml($_version);
+        }
+        
+        $replace = $this->preToHtml($_version);
+        if (!is_array($replace)) {
+            return $replace;
+        }
+        $version = jeedom::versionAlias($_version);
+
+        $obj = $this->getCmd(null, 'refresh');
+        $replace["#idRefresh#"] = $obj->getId();
+
+        $obj = $this->getCmd(null, 'nErrors');
+        $replace["#nErrors#"] = $obj->execCmd();
+        $replace["#idnErrors#"] = $obj->getId();
+
+      return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'gardien_display', 'gardien')));
+    }
 }
 
 class gardienCmd extends cmd
