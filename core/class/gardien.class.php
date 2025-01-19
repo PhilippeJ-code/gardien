@@ -52,10 +52,12 @@ class gardien extends eqLogic
     {
         $bSave = false;
         $nErreurs = 0;
+        $nControles = 0;
         // Equipements
         //
         if ($this->getConfiguration('equipements')) {
             $equipements = $this->getConfiguration('equipements');
+            $nControles += count($equipements);
             for ($i = 0; $i < count($equipements);$i++) {
                 $eqLogic = eqLogic::byId(str_replace(array('eqLogic','#'), '', $equipements[$i]['eqLogic']));
                 if (!is_object($eqLogic)) {
@@ -100,6 +102,7 @@ class gardien extends eqLogic
         //
         if ($this->getConfiguration('commandes')) {
             $commandes = $this->getConfiguration('commandes');
+            $nControles += count($commandes);
             for ($i = 0; $i < count($commandes);$i++) {
                 $cmd = cmd::byId(str_replace('#', '', $commandes[$i]['cmd']));
                 if (!is_object($cmd)) {
@@ -152,6 +155,7 @@ class gardien extends eqLogic
             $this->save();
         }
         $this->getCmd(null, 'nErrors')->event($nErreurs);
+        $this->getCmd(null, 'nControls')->event($nControles);
     }
 
     // On exécute les actions ko
@@ -270,7 +274,7 @@ class gardien extends eqLogic
 
         $refresh = $this->getCmd(null, 'refresh');
         if (!is_object($refresh)) {
-            $refresh = new viessmannIotCmd();
+            $refresh = new gardienCmd();
             $refresh->setName(__('Rafraichir', __FILE__));
         }
         $refresh->setEqLogic_id($this->getId());
@@ -278,6 +282,19 @@ class gardien extends eqLogic
         $refresh->setType('action');
         $refresh->setSubType('other');
         $refresh->save();
+
+        $nControles = $this->getCmd(null, 'nControls');
+        if (!is_object($nControles)) {
+            $nControles = new gardienCmd();
+            $nControles->setName(__('Controles', __FILE__));
+            $nControles->setIsVisible(1);
+            $nControles->setIsHistorized(0);
+        }
+        $nControles->setEqLogic_id($this->getId());
+        $nControles->setType('info');
+        $nControles->setSubType('numeric');
+        $nControles->setLogicalId('nControls');
+        $nControles->save();
 
         $nErreurs = $this->getCmd(null, 'nErrors');
         if (!is_object($nErreurs)) {
@@ -329,6 +346,10 @@ class gardien extends eqLogic
         $obj = $this->getCmd(null, 'nErrors');
         $replace["#nErrors#"] = $obj->execCmd();
         $replace["#idnErrors#"] = $obj->getId();
+
+        $obj = $this->getCmd(null, 'nControls');
+        $replace["#nControls#"] = $obj->execCmd();
+        $replace["#idnControls#"] = $obj->getId();
 
       return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'gardien_display', 'gardien')));
     }

@@ -17,6 +17,8 @@
 
                 </br></br></br>
 
+                <span class="classSousTitre#uid#">Nombre de contrôles</span>
+                <span class="classValeur#uid#" id="idNombreControles#uid#"></span></br>
                 <span class="classSousTitre#uid#">Nombre d'erreurs</span>
                 <span class="classValeur#uid#" id="idNombreErreurs#uid#"></span></br>
 
@@ -133,6 +135,14 @@
             }
         }
         Update#uid#idnErrors({ display_value: '#nErrors#' });
+
+        jeedom.cmd.addUpdateFunction('#idnControls#', Update#uid#idnControls);
+        function Update#uid#idnControls(_options) {
+            if (is_object(cmd1 = document.getElementById('idNombreControles#uid#'))) {
+                cmd1.innerHTML = _options.display_value;            
+            }
+        }
+        Update#uid#idnControls({ display_value: '#nControls#' });
 
     </script>
 
