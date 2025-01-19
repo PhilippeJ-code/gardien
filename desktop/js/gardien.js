@@ -15,6 +15,121 @@
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Event Add Action
+//
+function eventAddAction()
+{
+    addAction({}, this.getAttribute('data-type'));
+}
+
+els = document.querySelectorAll(".addAction");
+els.forEach(function(el) {
+    el.removeEventListener('click', eventAddAction);
+    el.addEventListener('click', eventAddAction);
+});
+
+// Event Select Action
+//
+function eventSelectAction()
+{
+    var type = this.getAttribute('data-type');
+    var el = this.closest('.' + type).querySelector('.expressionAttr[data-l1key=cmd]');
+
+    jeedom.cmd.getSelectModal({ cmd: { type: 'action' } }, function (result) {
+        el.value = result.human;
+        jeedom.cmd.displayActionOption(el.value, '', function (html) {
+            el.closest('.' + type).querySelector('.actionOptions').innerHTML= html;
+            let scripts = el.closest('.' + type).querySelector('.actionOptions').querySelectorAll('script');
+            scripts.forEach(script => {
+              let newScript = document.createElement('script');
+              newScript.text = script.text;
+              document.body.appendChild(newScript);
+              script.remove();
+            });
+        });   
+    });
+}
+
+// Event Remove Action
+//
+function eventRemoveAction()
+{
+    var type = this.getAttribute('data-type');
+    this.removeEventListener('click', eventRemoveAction);
+    this.removeEventListener('click', eventSelectAction);
+    this.closest('.' + type).remove();
+}
+
+// Event Add Equipment
+//
+function eventAddEquipment()
+{
+    addEquipment({}, this.getAttribute('data-type'));
+}
+
+els = document.querySelectorAll(".addEquipment");
+els.forEach(function(el) {
+    el.removeEventListener('click', eventAddEquipment);
+    el.addEventListener('click', eventAddEquipment);
+});
+
+// Event Remove Equipment
+//
+function eventRemoveEquipment()
+{
+    var type = this.getAttribute('data-type');
+    this.removeEventListener('click', eventRemoveEquipment);
+    this.removeEventListener('click', eventSelectEquipment);
+    this.closest('.' + type).remove();
+}
+
+// Event Select Equipment
+//
+function eventSelectEquipment()
+{
+    var type = this.getAttribute('data-type');
+    var el = this.closest('.' + type).querySelector('.expressionAttr[data-l1key=eqLogic]');
+
+    jeedom.eqLogic.getSelectModal({ options: {} }, function (result) {
+        el.value = result.human;
+  });
+}
+
+// Event Add Info
+//
+function eventAddInfo()
+{
+    addInfo({}, this.getAttribute('data-type'));
+}
+
+els = document.querySelectorAll(".addCommand");
+els.forEach(function(el) {
+    el.removeEventListener('click', eventAddInfo);
+    el.addEventListener('click', eventAddInfo);
+});
+
+// Event Remove Info
+//
+function eventRemoveInfo()
+{
+    var type = this.getAttribute('data-type');
+    this.removeEventListener('click', eventRemoveInfo);
+    this.removeEventListener('click', eventSelectInfo);
+    this.closest('.' + type).remove();
+}
+
+// Event Select Info
+//
+function eventSelectInfo()
+{
+    var type = this.getAttribute('data-type');
+    var el = this.closest('.' + type).querySelector('.expressionAttr[data-l1key=cmd]');
+
+    jeedom.cmd.getSelectModal({ cmd: { type: 'info' } }, function (result) {
+      el.value = result.human;
+  });
+}
+
 // Add command
 //
 function addCmdToTable(_cmd) {
@@ -101,5 +216,232 @@ function addCmdToTable(_cmd) {
             jeedom.cmd.changeType(newRow, init(_cmd.subType))
         }
     })
+}
+
+// Add Action
+//
+function addAction(_action, _type) {
+
+  if (!isset(_action)) {
+    _action = {}
+  }
+  if (!isset(_action.options)) {
+    _action.options = {}
+  }
+
+  var div = '<div class="' + _type + '">'
+  div += '<div class="form-group">';
+  div += '<label class="col-sm-1 control-label">Action</label>';  
+  div += '<div class="col-sm-3">';
+  div += '<div class="input-group">';
+  div += '<span class="input-group-btn">';
+  div += '<a class="btn btn-default bt_removeAction roundedLeft" data-type="' + _type + '"><i class="fas fa-minus-circle"></i></a>';
+  div += '</span>';
+  div += '<input class="expressionAttr form-control cmdAction" data-l1key="cmd" data-type="' + _type + '" />';
+  div += '<span class="input-group-btn">';
+  div += '<a class="btn btn-default listCmdAction roundedRight" data-type="' + _type + '"><i class="fas fa-list-alt"></i></a>';
+  div += '</span>';
+  div += '</div>';
+  div += '</div>';
+  div += '<div class="col-sm-4 actionOptions">';
+  div += jeedom.cmd.displayActionOption(init(_action.cmd, ''), _action.options);
+  div += '</div>';
+  div += '</div>';
+  div += '</div>';
+  
+  document.getElementById('div_' + _type).insertAdjacentHTML('beforeend', div);
+  let scripts = document.getElementById('div_' + _type).querySelectorAll('script');
+  scripts.forEach(script => {
+    let newScript = document.createElement('script');
+    newScript.text = script.text;
+    document.body.appendChild(newScript);
+    script.remove();
+  });
+
+  var newRow = document.querySelectorAll('#div_' + _type + ' .' + _type + '').last();
+
+  newRow.setJeeValues(_action, '.expressionAttr');
+
+  let el = newRow.querySelector(".bt_removeAction");
+  el.addEventListener('click', eventRemoveAction);
+
+  el = newRow.querySelector(".listCmdAction");
+  el.addEventListener('click', eventSelectAction); 
+  
+}
+
+// Add Equipment
+//
+function addEquipment(_equipment, _type) {
+
+  if (!isset(_equipment)) {
+    _equipment = {}
+  }
+  if (!isset(_equipment.options)) {
+    _equipment.options = {}
+  }
+
+  if (!isset(_equipment.options.state)) _equipment.options.state = 'Inconnu';
+
+  switch (_equipment.options.state) {
+    case "Vrai":
+      var icon =
+        '<i class="far fa-thumbs-down"  style="color: red!important;"></i>';
+      break;
+    case "Faux":
+      var icon =
+        '<i class="far fa-thumbs-up" style="color: green!important;"></i>';
+      break;
+    default:
+      var icon =
+        '<i class="far fa-question-circle" style="color: blue!important;"></i>';
+  }
+
+  var div = '<div class="' + _type + '">'
+  div += '<div class="form-group">';
+  div += '<label class="col-sm-1 control-label">Equipement</label>';  
+  div += '<div class="col-sm-3">';
+  div += '<div class="input-group">';
+  div += '<span class="input-group-btn">';
+  div += '<a class="btn btn-default bt_removeEquipment roundedLeft" data-type="' + _type + '"><i class="fas fa-minus-circle"></i></a>';
+  div += '</span>';
+  div += '<input class="expressionAttr form-control" data-l1key="eqLogic" data-type="' + _type + '" />';
+  div += '<span class="input-group-btn">';
+  div += '<a class="btn btn-default listEquipment roundedRight" data-type="' + _type + '"><i class="fas fa-list-alt"></i></a>';
+  div += '</span>';
+  div += '</div>';
+  div += '</div>';
+  div += '<div class="col-sm-8 equipmentOptions">';
+  div += '<label class="col-sm-2 control-label"> </label>';  
+  div += '<label class="col-sm-1 control-label">Condition</label>';  
+  div += '<input class="col-sm-2 tooltips expressionAttr form-control input-sm" data-l1key="options" data-l2key="condition" placeholder="{{< 3200}}" title="{{Condition}}">' 
+  div += '<label class="col-sm-1 control-label">Statut</label>';  
+  div += icon;
+  div += '</div>';
+  div += '</div>';
+  div += '</div>';
+
+  document.getElementById('div_' + _type).insertAdjacentHTML('beforeend', div);
+  
+  var newRow = document.querySelectorAll('#div_' + _type + ' .' + _type + '').last();
+
+  newRow.setJeeValues(_equipment, '.expressionAttr');
+
+  let el = newRow.querySelector(".bt_removeEquipment");
+  el.addEventListener('click', eventRemoveEquipment);
+
+  el = newRow.querySelector(".listEquipment");
+  el.addEventListener('click', eventSelectEquipment); 
+    
+}
+
+// Add Info
+//
+function addInfo(_info, _type) {
+
+  if (!isset(_info)) {
+    _info = {}
+  }
+  if (!isset(_info.options)) {
+    _info.options = {}
+  }
+
+  if (!isset(_info.options.state)) _info.options.state = 'Inconnu';
+
+  switch (_info.options.state) {
+    case "Vrai":
+      var icon =
+        '<i class="far fa-thumbs-down"  style="color: red!important;"></i>';
+      break;
+    case "Faux":
+      var icon =
+        '<i class="far fa-thumbs-up" style="color: green!important;"></i>';
+      break;
+    default:
+      var icon =
+        '<i class="far fa-question-circle" style="color: blue!important;"></i>';
+  }
+
+  var div = '<div class="' + _type + '">'
+  div += '<div class="form-group">';
+  div += '<label class="col-sm-1 control-label">Info</label>';  
+  div += '<div class="col-sm-3">';
+  div += '<div class="input-group">';
+  div += '<span class="input-group-btn">';
+  div += '<a class="btn btn-default bt_removeInfo roundedLeft" data-type="' + _type + '"><i class="fas fa-minus-circle"></i></a>';
+  div += '</span>';
+  div += '<input class="expressionAttr form-control" data-l1key="cmd" data-type="' + _type + '" />';
+  div += '<span class="input-group-btn">';
+  div += '<a class="btn btn-default listCmdInfo roundedRight" data-type="' + _type + '"><i class="fas fa-list-alt"></i></a>';
+  div += '</span>';
+  div += '</div>';
+  div += '</div>';
+  div += '<div class="col-sm-8 infoOptions">';
+  div += '<label class="col-sm-2 checkbox-inline"><input type="checkbox" class="expressionAttr" data-l1key="options" data-l2key="collectdate"/>{{Date de collecte}}</label>'
+  div += '<label class="col-sm-1 control-label">Condition</label>';  
+  div += '<input class="col-sm-2 tooltips expressionAttr form-control input-sm" data-l1key="options" data-l2key="condition" placeholder="{{== 1 ou < 3200}}" title="{{Condition}}">' 
+  div += '<label class="col-sm-1 control-label">Statut</label>';  
+  div += icon;
+  div += '</div>';
+  div += '</div>';
+  div += '</div>';
+
+  document.getElementById('div_' + _type).insertAdjacentHTML('beforeend', div);
+  
+  var newRow = document.querySelectorAll('#div_' + _type + ' .' + _type + '').last();
+
+  newRow.setJeeValues(_info, '.expressionAttr');
+
+  let el = newRow.querySelector(".bt_removeInfo");
+  el.addEventListener('click', eventRemoveInfo);
+
+  el = newRow.querySelector(".listCmdInfo");
+  el.addEventListener('click', eventSelectInfo); 
+    
+}
+
+function saveEqLogic(_eqLogic) {
+  if (!isset(_eqLogic.configuration)) {
+      _eqLogic.configuration = {};
+  }
+
+  _eqLogic.configuration.actions_vrai_conf = document.querySelectorAll('#div_actions_vrai .actions_vrai').getJeeValues('.expressionAttr');
+  _eqLogic.configuration.actions_faux_conf = document.querySelectorAll('#div_actions_faux .actions_faux').getJeeValues('.expressionAttr');
+
+  _eqLogic.configuration.equipements = document.querySelectorAll('#div_equipements .equipements').getJeeValues('.expressionAttr');
+  _eqLogic.configuration.commandes = document.querySelectorAll('#div_commandes .commandes').getJeeValues('.expressionAttr');
+
+  return _eqLogic;
+}
+
+function printEqLogic(_eqLogic) {
+
+  document.getElementById('div_actions_vrai').innerHTML = '';
+  document.getElementById('div_actions_faux').innerHTML = '';
+  document.getElementById('div_equipements').innerHTML = '';
+  document.getElementById('div_commandes').innerHTML = '';
+
+  if (isset(_eqLogic.configuration)) {
+    if (isset(_eqLogic.configuration.actions_vrai_conf)) {
+      for (var i in _eqLogic.configuration.actions_vrai_conf) {
+        addAction(_eqLogic.configuration.actions_vrai_conf[i], 'actions_vrai');
+      }
+    }
+    if (isset(_eqLogic.configuration.actions_faux_conf)) {
+      for (var i in _eqLogic.configuration.actions_faux_conf) {
+          addAction(_eqLogic.configuration.actions_faux_conf[i], 'actions_faux');
+      }
+    }
+    if (isset(_eqLogic.configuration.equipements)) {
+      for (var i in _eqLogic.configuration.equipements) {
+        addEquipment(_eqLogic.configuration.equipements[i], 'equipements');
+      }
+    }
+    if (isset(_eqLogic.configuration.commandes)) {
+      for (var i in _eqLogic.configuration.commandes) {
+        addInfo(_eqLogic.configuration.commandes[i], 'commandes');
+      }
+    }
+  }
 }
 

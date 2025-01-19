@@ -54,6 +54,9 @@
     <ul class="nav nav-tabs" role="tablist">
       <li role="presentation"><a href="#" class="eqLogicAction" aria-controls="home" role="tab" data-toggle="tab" data-action="returnToThumbnailDisplay"><i class="fa fa-arrow-circle-left"></i></a></li>
       <li role="presentation" class="active"><a href="#eqlogictab" aria-controls="home" role="tab" data-toggle="tab"><i class="fas fa-tachometer-alt"></i> {{Equipement}}</a></li>
+      <li role="presentation"><a href="#horairetab" role="tab" data-toggle="tab"><i class="fa fa-list-alt"></i>{{Horaire}}</a></li>
+      <li role="presentation"><a href="#surveillancetab" role="tab" data-toggle="tab"><i class="fa fa-list-alt"></i>{{Surveillance}}</a></li>
+      <li role="presentation"><a href="#actionstab" role="tab" data-toggle="tab"><i class="fa fa-list-alt"></i>{{Actions}}</a></li>
       <li role="presentation"><a href="#commandtab" aria-controls="profile" role="tab" data-toggle="tab"><i class="fa fa-list-alt"></i> {{Commandes}}</a></li>
     </ul>
     <div class="tab-content" style="height:calc(100% - 50px);overflow:auto;overflow-x: hidden;">
@@ -107,6 +110,134 @@
           </fieldset>
         </form>
       </div>
+
+      <!--
+
+        Onglet Horaire
+
+      -->
+      <div role="tabpanel" class="tab-pane" id="horairetab">
+
+        <form class="form-horizontal">
+          <fieldset>
+
+            <br /><br />
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">{{Cron gardiennage}}
+                <sup><i class="fas fa-question-circle tooltips"
+                    title="{{Horaire du gardiennage}}"></i></sup>
+              </label>
+              <div class="col-sm-2">
+                <div class="input-group">
+                  <input type="text" class="eqLogicAttr form-control" data-l1key="configuration"
+                    data-l2key="cron_gardiennage" />
+                  <span class="input-group-btn">
+                    <a class="btn btn-default cursor jeeHelper" data-helper="cron"><i
+                        class="fas fa-question-circle"></i></a>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </fieldset>
+        </form>
+      </div>
+
+      <!--
+
+        Onglet Surveillance
+
+      -->
+      <div role="tabpanel" class="tab-pane" id="surveillancetab">
+
+        <form class="form-horizontal">
+          <fieldset>
+
+            <br /><br />
+
+            <form class="form-horizontal">
+              <fieldset>
+                <div>
+                  <legend>
+                    {{Equipements ( On teste le délai depuis la dernière communication)}}
+                    <a class="btn btn-primary btn-xs pull-right addEquipment" data-type="equipements"
+                      style="position: relative; top : 5px;"><i class="fas fa-plus-circle"></i> {{Ajouter un équipement}}</a>
+                  </legend>
+                  <div id="div_equipements">
+
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+
+            <br /><br />
+
+            <form class="form-horizontal">
+              <fieldset>
+                <div>
+                  <legend>
+                    {{Commandes ( On teste la valeur de la commande ou la date de collecte)}}
+                    <a class="btn btn-primary btn-xs pull-right addCommand" data-type="commandes"
+                      style="position: relative; top : 5px;"><i class="fas fa-plus-circle"></i> {{Ajouter une commande}}</a>
+                  </legend>
+                  <div id="div_commandes">
+
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+
+          </fieldset>
+        </form>
+      </div>
+
+      <!--
+
+        Onglet Actions
+
+      -->
+      <div role="tabpanel" class="tab-pane" id="actionstab">
+        <form class="form-horizontal">
+          <fieldset>
+            <br /><br />
+
+             <form class="form-horizontal">
+              <fieldset>
+                <div>
+                  <legend>
+                    {{Actions si erreur}}
+                    <a class="btn btn-primary btn-xs pull-right addAction" data-type="actions_vrai"
+                      style="position: relative; top : 5px;"><i class="fas fa-plus-circle"></i> {{Ajouter une
+                      action}}</a>
+                  </legend>
+                  <div id="div_actions_vrai">
+
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+
+            <form class="form-horizontal">
+              <fieldset>
+                <div>
+                  <legend>
+                    {{Actions si pas d'erreur}}
+                    <a class="btn btn-primary btn-xs pull-right addAction" data-type="actions_faux"
+                      style="position: relative; top : 5px;"><i class="fas fa-plus-circle"></i> {{Ajouter une
+                      action}}</a>
+                  </legend>
+                  <div id="div_actions_faux">
+
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+
+          </fieldset>
+        </form>
+      </div>
+
       <div role="tabpanel" class="tab-pane" id="commandtab">
         <a class="btn btn-success btn-sm cmdAction pull-right" data-action="add" style="margin-top:5px;"><i class="fa fa-plus-circle"></i> {{Commandes}}</a><br/><br/>
         <table id="table_cmd" class="table table-bordered table-condensed">
